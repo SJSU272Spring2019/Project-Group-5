@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <script>
+        function SetFocus()
+        {
+            var input = document.getElementById ("username");
+            input.focus ();
+        }
+    </script>
+</head>
+<body OnLoad="SetFocus();">
+<br><br><br>
+<div align="center"><h2>The Tracore Training Management System Login Page </h2></div> <br>
+<form name="login_form" id="login_form" action="/login/" method="post" >
+    {% csrf_token %}
+    <table border="0" align="Center">
+        <tr>
+            <td>User Name</td>
+            <td><input type="text" name="username" id="username">
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Password</td>
+            <td><input type="password" name="password" ></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center"></td>
+            <td></td>
+        </tr>
+    </table>
+
+<div align="center"><input type="submit" value="Log In" /></div>
+    <br><br><br>
+    <div align="center" >{{ user_message }}</div>
+    <br><br><br>
+    <div align="center">The following link should not be accessible to the typcial user.  </br>I've included it here to conmplete the code but this should really only be accessible from the main menu to the admin. <br> <a href="/create_account">Create New Account</a></div>
+</form>
+</body>
+</html>
