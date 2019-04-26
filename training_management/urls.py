@@ -19,6 +19,8 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('authenticate.urls')),
+    path('create_account', include('authenticate.urls')),
+    path('confirm_account', include('authenticate.urls')),
     path('deployment_queue/', include('deployment_queue.urls')),
     path('deployment_detail/', include('deployment_detail.urls')),
     path('queue/', include('queue_page.urls')),

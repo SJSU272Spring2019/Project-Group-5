@@ -20,7 +20,15 @@
             recording_complete_date = [ {% for item in deliverable_records %}"{{item.record_date.month}}/{{item.record_date.day}}/{{item.record_date.year}}", {% endfor %} ]
             post_processing_complete_date = [ {% for item in deliverable_records %}"{{item.post_processing_complete_date.month}}/{{item.post_processing_complete_date.day}}/{{item.post_processing_complete_date.year}}", {% endfor %} ]
             target_deploy_date = [ {% for item in deliverable_records %}"{{item.target_deploy_date.month}}/{{item.target_deploy_date.day}}/{{item.target_deploy_date.year}}", {% endfor %} ]
-
+            if ('{{ role }}' == 'Admin')
+            {
+                document.getElementById('deployment_queue').style.display="block";
+                document.getElementById('create_account').style.display="block";
+            }else
+            {
+                document.getElementById('deployment_queue').style.display="none";
+                document.getElementById('create_account').style.display="none";
+            }
             table = document.getElementById("queue_table");
 
             for (i = 0; i < deliverable_id_array.length; i++) {
@@ -49,7 +57,6 @@
                 cell.style.textAlign = "center";
                 cell.innerHTML = deliverable_status_array[i];
                 cell.style.textAlign = "center";
-
             }
             document.getElementById("selection").value = '{{ selection_value }}';
         }
@@ -74,13 +81,13 @@
             <option value = "Record Queue">Record Queue</option>
             <option value = "Post Processing Queue">Post Processing Queue</option>
             <option value = "Deployment Queue">Deployment Queue</option>
-            <option value = "Administrator Queue">Administrator Queue</option>
+            <option value = "Show All Deliverables">Show All Deliverables</option>
         </select><br><br><br><br></div>
         <table id="queue_table" align="center" width="1500" border="1">
             <thead><tr><td align="center">Deliverable ID</td><td align="center">Course Name</td><td align="center">Category</td><td align="center">Project Lead</td><td align="center">Content Complete Date</td><td align="center">Recording Complete Date</><td align="center">Post Processing Complete Date</td><td align="center">Target Deploy Date</td><td align="center">Status</td></tr></thead>
         </table>
         <br><br><br>
-       <div align="center"><input type="submit" name="create_deliverable" value="Create Deliverable"/></div>
+       <div align="center"><input type="submit" name="create_deliverable" value="Create Deliverable"/><br><br><input type="submit" id="deployment_queue" name="deployment_queue" value="Deployment Queue"/><br><input type="submit" id="create_account" name="create_account" value="Create Account"/></div>
     </form>
 </body>
 </html>

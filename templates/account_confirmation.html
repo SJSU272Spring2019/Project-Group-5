@@ -9,6 +9,11 @@
 <div align="center"><h2>New account created </h2></div> <br>
 
     <div align="center" >{{ user_message }}</div>
+    <form name="account_confirmation_form" action="/done/" method="post">
+        {% csrf_token %}
+        <br><br>
+        <div align="center"><input type="submit" name="deliverable_queue" value="Deliverable Queue"/></div>
+    </form>
 
 </body>
 </html>

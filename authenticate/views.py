@@ -24,6 +24,10 @@ def my_login(request):
         return render(request,'login.html', {'user_message': 'Please log in'})
 
 
+def account_confirmed(request):
+    return redirect('/queue')
+
+
 def create_account(request: object):
     if request.method == 'GET':
         return render(request, 'create_account.html', {'user_message': 'message'})
