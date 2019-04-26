@@ -21,7 +21,6 @@
 
             if ('{{ my_deliverable_detail_record.content_complete_date }}' === 'None') {document.getElementById("content_complete_date").value=''}else{document.getElementById("content_complete_date").value='{{ my_deliverable_detail_record.content_complete_date.month }}/{{ my_deliverable_detail_record.content_complete_date.day}}/{{ my_deliverable_detail_record.content_complete_date.year }}'}
             if ('{{ my_deliverable_detail_record.record_date }}' === 'None') {document.getElementById("record_date").value=''}else{document.getElementById("record_date").value='{{ my_deliverable_detail_record.record_date.month }}/{{ my_deliverable_detail_record.record_date.day }}/{{ my_deliverable_detail_record.record_date.year }}'}
-            if ('{{ my_deliverable_detail_record.processing_complete_date }}' === 'None') {document.getElementById("processing_complete_date").value=''}else{document.getElementById("processing_complete_date").value = '{{ my_deliverable_detail_record.processing_complete_date.month }}/{{ my_deliverable_detail_record.processing_complete_date.day }}/{{ my_deliverable_detail_record.processing_complete_date.year }}'}
             if ('{{ my_deliverable_detail_record.post_processing_complete_date }}' === 'None') {document.getElementById("post_processing_complete_date").value=''}else{document.getElementById("post_processing_complete_date").value = '{{ my_deliverable_detail_record.post_processing_complete_date.month }}/{{ my_deliverable_detail_record.post_processing_complete_date.day }}/{{ my_deliverable_detail_record.post_processing_complete_date.year }}'}
             if ('{{ my_deliverable_detail_record.target_deploy_date }}' === 'None') {document.getElementById("target_deploy_date").value=''}else{document.getElementById("target_deploy_date").value='{{ my_deliverable_detail_record.target_deploy_date.month }}/{{ my_deliverable_detail_record.target_deploy_date.day }}/{{ my_deliverable_detail_record.target_deploy_date.year }}'}
         }
@@ -74,7 +73,6 @@
             <tr><td align="right">Notes</td>  <td><input type="text" name="notes" id="notes"></td></tr>
             <tr><td align="right">Content Complete Date</td>          <td><input type="text" name="content_complete_date" id="content_complete_date"></td></tr>
             <tr><td align="right">Record Date</td>         <td><input type="text" name="record_date" id="record_date"></td></tr>
-            <tr><td align="right">Processing Complete Date</td>        <td><input type="text" name="processing_complete_date" id="processing_complete_date"></td></tr>
             <tr><td align="right">Post Processing Complete Date</td>        <td><input type="text" name="post_processing_complete_date" id="post_processing_complete_date"></td></tr>
             <tr><td align="right">Target Deploy Date</td>        <td><input type="text" name="target_deploy_date" id="target_deploy_date"></td></tr>
         </table>
