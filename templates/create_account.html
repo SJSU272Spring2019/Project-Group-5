@@ -12,14 +12,16 @@
     </script>
 </head>
 <body onload="SetFocus()">
+    <div align="right">Logged in as: {{ profile_info.username }} <a href="/logout/">logout</a></div>
     <br><br><br>
     <div align="center"><h2>Create a New Account </h2></div> <br>
     <form name="create_account_form" action="/create_account/" method="post" >
         {% csrf_token %}
         <table align="center" border="0">
             <tr>
-                <td>First Name: </td><td><input type="text" name="first_name" id="first_name"></td><td>Last Name: </td><td><input type="text" name="last_name" ></td>
+                <td>First Name: </td><td><input type="text" name="first_name" id="first_name"></td>
             </tr>
+            <tr><td>Last Name: </td><td><input type="text" name="last_name" ></td></tr>
             <tr>
                 <td>Email Address:</td><td><input type="text" name="email" ></td>
             </tr>
@@ -50,11 +52,12 @@
             <tr>
                 <td>Notes:</td><td><input type="text" name="notes" ></td>
             </tr>
-            <tr>
-                <td colspan="4" align="center"><input type="submit" value="Save New User" /></td>
-            </tr>
         </table>
+        <br><br><br>
+        <div align="center"><input type="submit" name="save_new_user" value="Save New User" />  <input type="submit" name="cancel" value="Cancel" /></div>
+
     </form>
+    <br><br><br>
     <div align="center" >{{ user_message }}</div>
 </body>
 </html>

@@ -72,20 +72,13 @@
                 var cell = row.insertCell(13);
                 cell.innerHTML = '<input type="checkbox" name="Completed" value=' + deliverable_id_array[i] + '>';
                 cell.style.textAlign = "center";
-
-
             }
-
-
-
-
-
-
         }
 
         </script>
 </head>
 <body onload="form_loader()">
+    <div align="right">Logged in as: {{ profile_info.username }} <a href="/logout/">logout</a></div>
     <br><br>
     <div align="center"><h1>Deployment Queue Page</h1></div><br><br>
     <form name="queue_form" action="/deployment_queue/queue_submit/" method="post">

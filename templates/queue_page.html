@@ -4,8 +4,16 @@
     <meta charset="UTF-8">
     <title>Deliverable Queue Page</title>
      <script>
+        function SetFocus()
+        {
+            var input = document.getElementById ("username");
+            input.focus ();
+        }
+
         function form_loader()
         {
+            var input = document.getElementById ("search_box");
+            input.focus ();
             deliverable_id_array = [ {% for item in deliverable_records %}"{{item.id}}", {% endfor %} ]
             deliverable_name_array = [ {% for item in deliverable_records %}"{{item.course_name}}", {% endfor %} ]
             deliverable_category_array = [ {% for item in deliverable_records %}"{{item.category}}", {% endfor %} ]
@@ -20,7 +28,7 @@
             recording_complete_date = [ {% for item in deliverable_records %}"{{item.record_date.month}}/{{item.record_date.day}}/{{item.record_date.year}}", {% endfor %} ]
             post_processing_complete_date = [ {% for item in deliverable_records %}"{{item.post_processing_complete_date.month}}/{{item.post_processing_complete_date.day}}/{{item.post_processing_complete_date.year}}", {% endfor %} ]
             target_deploy_date = [ {% for item in deliverable_records %}"{{item.target_deploy_date.month}}/{{item.target_deploy_date.day}}/{{item.target_deploy_date.year}}", {% endfor %} ]
-            if ('{{ role }}' == 'Admin')
+            if ('{{ profile_info.role }}' == 'Admin')
             {
                 document.getElementById('deployment_queue').style.display="block";
                 document.getElementById('create_account').style.display="block";
@@ -70,10 +78,12 @@
         </script>
 </head>
 <body onload="form_loader()">
+    <div align="right">Logged in as: {{ profile_info.username }} <a href="/logout/">logout</a></div>
     <br><br>
     <div align="center"><h1>Sales Training Deliverable Queue Page</h1></div><br><br>
     <form name="queue_form" action="/queue/queue_submit/" method="post">
         {% csrf_token %}
+
         <div align="center">
             <input type="submit" name="search" id="search">  <input type="text" name="search_box" id="search_box"><br><br>
             <select name="selection" id="selection" onchange="my_selection()">
@@ -84,7 +94,7 @@
             <option value = "Show All Deliverables">Show All Deliverables</option>
         </select><br><br><br><br></div>
         <table id="queue_table" align="center" width="1500" border="1">
-            <thead><tr><td align="center">Deliverable ID</td><td align="center">Course Name</td><td align="center">Category</td><td align="center">Project Lead</td><td align="center">Content Complete Date</td><td align="center">Recording Complete Date</><td align="center">Post Processing Complete Date</td><td align="center">Target Deploy Date</td><td align="center">Status</td></tr></thead>
+            <thead><tr><td align="center">Deliverable ID</td><td align="center">Course Name</td><td align="center">Category</td><td align="center">Project Lead</td><td align="center">Content Complete Date</td><td align="center">Recording Complete Date</td><td align="center">Post Processing Complete Date</td><td align="center">Target Deploy Date</td><td align="center">Status</td></tr></thead>
         </table>
         <br><br><br>
        <div align="center"><input type="submit" name="create_deliverable" value="Create Deliverable"/><br><br><input type="submit" id="deployment_queue" name="deployment_queue" value="Deployment Queue"/><br><input type="submit" id="create_account" name="create_account" value="Create Account"/></div>

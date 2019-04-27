@@ -1,32 +1,44 @@
 from django.shortcuts import render
 from . models import DeploymentDetail
 from deliverable_detail.models import Deliverable
+from authenticate.models import UserProfile
 
-def index(request):
-    return render(request, 'index.html')
+def index(request): # This line should be removed
+    return render(request, 'index.html')  # This line should be removed
 
 
 def deployment_detail(request):
+    if not request.user.is_authenticated:
+        user_message = "Please login to access the Training Management System"
+        return render(request, 'login.html', {'user_message': user_message})
     return render(request, 'deployment_detail.html')
 
 def deployment_detail_submit(request):
+    if not request.user.is_authenticated:
+        user_message = "Please login to access the Training Management System"
+        return render(request, 'login.html', {'user_message': user_message})
+
     if request.POST.get('deployment_cancel') == 'Cancel':
         if request.POST['deliverable_id'] != '':
             my_deliverable_detail_record = Deliverable.objects.get(id=int(request.POST['deliverable_id']))
-            return render(request, 'create_deliverable.html', {'my_deliverable_detail_record':my_deliverable_detail_record})
+            return render(request, 'create_deliverable.html', {'my_deliverable_detail_record':my_deliverable_detail_record, 'profile_info':UserProfile.objects.get(username=request.user.username)})
         else:
             my_deliverable_detail_record = Deliverable()
-            return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record})
+            return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record, 'profile_info':UserProfile.objects.get(username=request.user.username)})
     elif request.POST.get('deployment_save_close'):
         my_deployment_detail_record = save(request)
         my_deliverable_detail_record = Deliverable.objects.get(id=int(request.POST['deliverable_id']))
-        return render(request, 'create_deliverable.html', {'my_deliverable_detail_record':my_deliverable_detail_record})
+        return render(request, 'create_deliverable.html', {'my_deliverable_detail_record':my_deliverable_detail_record, 'profile_info':UserProfile.objects.get(username=request.user.username)})
     else:
         my_deployment_detail_record = save(request)
-        return render(request, 'deployment_detail.html', {'my_deployment_detail_record': my_deployment_detail_record})
+        return render(request, 'deployment_detail.html', {'my_deployment_detail_record': my_deployment_detail_record, 'profile_info':UserProfile.objects.get(username=request.user.username)})
 
 
 def save(request):
+    if not request.user.is_authenticated:
+        user_message = "Please login to access the Training Management System"
+        return render(request, 'login.html', {'user_message': user_message})
+
     if request.POST['deliverable_id'] == '':
         my_deliverable_id = 0
     else:

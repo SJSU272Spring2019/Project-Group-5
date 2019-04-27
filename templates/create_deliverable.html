@@ -27,6 +27,7 @@
     </script>
 </head>
 <body onload="form_loader()">
+    <div align="right">Logged in as: {{ profile_info.username }} <a href="/logout/">logout</a></div>
     <br><br>
     <div align="center"><h1>Sales Training Deliverable Detail Page</h1></div><br><br>
     <form name="deployment_detail_form" action="/detail/deliverable_detail_submit/" method="post">

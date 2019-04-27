@@ -3,20 +3,29 @@ from django.http import HttpResponse
 from . models import Deliverable
 from datetime import datetime
 from deployment_detail.models import DeploymentDetail
+from authenticate.models import UserProfile
 
 # Create your views here.
 def index(request):
-    return render(request, 'create_deliverable.html')
+    if not request.user.is_authenticated:
+        user_message = "Please login to access the Training Management System"
+        return render(request, 'login.html', {'user_message': user_message})
+    return render(request, 'create_deliverable.html', {'profile_info': UserProfile.objects.get(username=request.user.username) })
 
 
 
 def deliverable_detail_submit(request):
+    if not request.user.is_authenticated:
+        user_message = "Please login to access the Training Management System"
+        return render(request, 'login.html', {'user_message': user_message})
+
     if request.POST.get('deploy_button'):
-        temp_deployment_record = DeploymentDetail.objects.filter(deliverable_id=int(request.POST['deliverable_id']))
+        my_deliverable_detail_record = save_detail(request)
+        temp_deployment_record = DeploymentDetail.objects.filter(deliverable_id=my_deliverable_detail_record.id)
         if not temp_deployment_record:
             # deliverable_record = Deliverable.objects.get(id=int(request.POST['deliverable_id']))
             my_deployment_detail_record = DeploymentDetail()
-            my_deployment_detail_record.deliverable_id = request.POST['deliverable_id']
+            my_deployment_detail_record.deliverable_id = my_deliverable_detail_record.id
             my_deployment_detail_record.course_name = request.POST['course_name']
             my_deployment_detail_record.course_description = request.POST['course_description']
             my_deployment_detail_record.category = request.POST['category']
@@ -24,20 +33,23 @@ def deliverable_detail_submit(request):
         else:
             my_deployment_detail_record = temp_deployment_record[0]
 
-        return render(request, 'deployment_detail.html', {'my_deployment_detail_record':my_deployment_detail_record})
+        return render(request, 'deployment_detail.html', {'my_deployment_detail_record':my_deployment_detail_record, 'profile_info': UserProfile.objects.get(username=request.user.username)})
     if request.POST.get('cancel_button'):
         deliverable_records = Deliverable.objects.filter(status='2) Develop')
-        return render(request, 'queue_page.html', {'deliverable_records': deliverable_records})
+        return render(request, 'queue_page.html', {'deliverable_records': deliverable_records , 'profile_info': UserProfile.objects.get(username=request.user.username)})
     if request.POST.get('save'):
         my_deliverable_detail_record=save_detail(request)
-        return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record})
+        return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record, 'profile_info': UserProfile.objects.get(username=request.user.username)})
     if request.POST.get('save_exit'):
         my_deliverable_detail_record = save_detail(request)
         deliverable_records = Deliverable.objects.filter(status='2) Develop')
-        return render(request, 'queue_page.html', {'deliverable_records': deliverable_records})
+        return render(request, 'queue_page.html', {'deliverable_records': deliverable_records, 'profile_info': UserProfile.objects.get(username=request.user.username)})
 
 
 def save_detail(request):
+    if not request.user.is_authenticated:
+        user_message = "Please login to access the Training Management System"
+        return render(request, 'login.html', {'user_message': user_message})
     if request.POST['content_complete_date'] == '':
         temp_content_complete_date = None
     else:
@@ -98,10 +110,16 @@ def save_detail(request):
 
 
 def queue_page(request):
-    return render(request, 'queue_page.html')
+    if not request.user.is_authenticated:
+        user_message = "Please login to access the Training Management System"
+        return render(request, 'login.html', {'user_message': user_message})
+    return render(request, 'queue_page.html', {'profile_info': UserProfile.objects.get(username=request.user.username)})
 
 
 def deliverable_link(request):
+    if not request.user.is_authenticated:
+        user_message = "Please login to access the Training Management System"
+        return render(request, 'login.html', {'user_message': user_message})
     my_deliverable_detail_record = Deliverable.objects.filter(id=int(request.GET['deliverable_id']))
-    return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record[0]})
+    return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record[0], 'profile_info': UserProfile.objects.get(username=request.user.username)})
 

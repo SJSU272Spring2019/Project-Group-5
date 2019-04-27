@@ -5,7 +5,7 @@
     <title>Deployment Detail Page</title>
     <script>
         function form_loader() {
-            document.getElementById("deliverable_id").value={{ my_deployment_detail_record.deliverable_id }}
+            document.getElementById("deliverable_id").value='{{ my_deployment_detail_record.deliverable_id }}'
             document.getElementById("category").value='{{ my_deployment_detail_record.category }}'
             document.getElementById("project_code").value='{{ my_deployment_detail_record.project_code }}'
             document.getElementById("course_order").value='{{ my_deployment_detail_record.course_order }}'
@@ -28,6 +28,7 @@
     </script>
 </head>
 <body onload="form_loader()">
+    <div align="right">Logged in as: {{ profile_info.username }} <a href="/logout/">logout</a></div>
     <br><br>
     <div align="center"><h1>This is the deployment detail page</h1></div><br><br>
     <form name="deployment_detail_form" action="/deployment_detail/deployment_detail_submit/" method="post">
