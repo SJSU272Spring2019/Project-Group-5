@@ -22,7 +22,7 @@ urlpatterns = [
     path('index/', views.index),
     path('', views.index),
     path('create_deliverable/', views.create_deliverable),
-    path('queue_submit/', views.queue_submit)
-
+    path('queue_submit/', views.queue_submit),
+    path('dashboard/', views.dashboard)
 
 ]

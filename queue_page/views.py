@@ -3,6 +3,7 @@ from deliverable_detail.models import Deliverable
 from deployment_detail.models import DeploymentDetail
 from authenticate.models import UserProfile
 from django.db.models import Q
+from django.db.models import Q, Count
 # Create your views here.
 # TODO Add 'New" to the queue selection dropdown
 # TODO Get functionality in the search box working
@@ -67,6 +68,19 @@ def queue_submit(request):
     else:
         deliverable_records = Deliverable.objects.filter(status='2) Develop')
     return render(request, 'queue_page.html', {'deliverable_records': deliverable_records, 'selection_value' : selection_value, 'profile_info':UserProfile.objects.get(username=request.user.username)})
+
+def dashboard(request):
+    test = Deliverable.objects.all()
+    count = Deliverable.objects.count()
+
+    dataset = Deliverable.objects.values('category') \
+        .annotate(a_d=Count('category', filter=Q(category='A&D')),
+                  ai_engine=Count('category', filter=Q(category='AI Engine')),
+                  automotive=Count('category', filter=Q(category='Automotive')),
+                  ism=Count('category', filter=Q(category='ISM')),
+                  software=Count('category', filter=Q(category='Software/IP/Tools - HLS'))) \
+        .order_by('category')
+    return render(request, 'dashboard.html', {'test':test, 'count':count, 'dataset':dataset})
 
 def logout(request):
     return render(request, '/', )

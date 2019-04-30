@@ -14,6 +14,7 @@
         {
             var input = document.getElementById ("search_box");
             input.focus ();
+            input.value = '{{ search_terms }}'
             deliverable_id_array = [ {% for item in deliverable_records %}"{{item.id}}", {% endfor %} ]
             deliverable_name_array = [ {% for item in deliverable_records %}"{{item.course_name}}", {% endfor %} ]
             deliverable_category_array = [ {% for item in deliverable_records %}"{{item.category}}", {% endfor %} ]
@@ -79,25 +80,31 @@
 </head>
 <body onload="form_loader()">
     <div align="right">Logged in as: {{ profile_info.username }} <a href="/logout/">logout</a></div>
-    <br><br>
     <div align="center"><h1>Sales Training Deliverable Queue Page</h1></div><br><br>
     <form name="queue_form" action="/queue/queue_submit/" method="post">
-        {% csrf_token %}
+    {% csrf_token %}
+    <table align="center">
+        <tr>
+            <td>
+                <select name="selection" id="selection" onchange="my_selection()">
+                    <option value = "Develop Queue">Develop Queue</option>
+                    <option value = "Record Queue">Record Queue</option>
+                    <option value = "Post Processing Queue">Post Processing Queue</option>
+                    <option value = "Deployment Queue">Deployment Queue</option>
+                    <option value = "Show All Deliverables">Show All Deliverables</option>
+                </select>
+            </td>
+            <td><input type="text" name="search_box" id="search_box"></td><td><input type="submit" name="search" id="search" style="width: 150px; " /></td></tr>
+        <tr><td align="center"><input type="submit" id="create_account" name="create_account" value="Create Account"  style="width: 160px; " /></td><td align="center"><input type="submit" id="deployment_queue" name="deployment_queue" value="Deployment Queue" style="width: 150px; "  /></td><td><input type="submit" name="create_deliverable" value="Create Deliverable" style="width: 150px; "  /></td></tr>
+            <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td> </td></tr>
+    </table><br><br>
 
-        <div align="center">
-            <input type="submit" name="search" id="search">  <input type="text" name="search_box" id="search_box"><br><br>
-            <select name="selection" id="selection" onchange="my_selection()">
-            <option value = "Develop Queue">Develop Queue</option>
-            <option value = "Record Queue">Record Queue</option>
-            <option value = "Post Processing Queue">Post Processing Queue</option>
-            <option value = "Deployment Queue">Deployment Queue</option>
-            <option value = "Show All Deliverables">Show All Deliverables</option>
-        </select><br><br><br><br></div>
         <table id="queue_table" align="center" width="1500" border="1">
             <thead><tr><td align="center">Deliverable ID</td><td align="center">Course Name</td><td align="center">Category</td><td align="center">Project Lead</td><td align="center">Content Complete Date</td><td align="center">Recording Complete Date</td><td align="center">Post Processing Complete Date</td><td align="center">Target Deploy Date</td><td align="center">Status</td></tr></thead>
         </table>
         <br><br><br>
-       <div align="center"><input type="submit" name="create_deliverable" value="Create Deliverable"/><br><br><input type="submit" id="deployment_queue" name="deployment_queue" value="Deployment Queue"/><br><input type="submit" id="create_account" name="create_account" value="Create Account"/></div>
+       <div align="center"></div>
     </form>
 </body>
 </html>

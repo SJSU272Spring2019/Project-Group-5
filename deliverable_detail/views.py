@@ -4,6 +4,8 @@ from . models import Deliverable
 from datetime import datetime
 from deployment_detail.models import DeploymentDetail
 from authenticate.models import UserProfile
+from django.contrib.auth.models import User
+import smtplib, ssl
 
 # Create your views here.
 def index(request):
@@ -87,10 +89,12 @@ def save_detail(request):
         my_deliverable_detail_record.save()
         my_deliverable_detail_record.deliverable_id = my_deliverable_detail_record.id
         my_deliverable_detail_record.save()
+        # if this is a new item being saved into status of record send a notification to everyone with a role of Media Services
 
     else:
         my_queryset = Deliverable.objects.filter(id=int(request.POST['deliverable_id']))
         my_deliverable_detail_record = my_queryset[0]
+        previous_status = my_deliverable_detail_record.status
         my_deliverable_detail_record.course_name = request.POST['course_name']
         my_deliverable_detail_record.category = request.POST['category']
         my_deliverable_detail_record.project_lead = request.POST['project_lead']
@@ -104,6 +108,26 @@ def save_detail(request):
         my_deliverable_detail_record.post_processing_complete_date = temp_post_processing_complete_date
         my_deliverable_detail_record.target_deploy_date = temp_target_deploy_date
         my_deliverable_detail_record.save()
+
+# If the existing record is being changed from some other status to Record - send a notification.  Need to replicate this in the save new section above in case a new record is saves as record
+        if my_deliverable_detail_record.status == '3) Record' and previous_status != '3) Record':
+            email_body = 'There is a new Sales Training Deliverable ready to be recorded.  Please contact ' + my_deliverable_detail_record.project_lead + ' for more information.  The Deliverable ID is: ' + str(my_deliverable_detail_record.id)
+            my_profileset = UserProfile.objects.filter(role='Media Services')
+            to_address = ''
+            for my_profile in my_profileset:
+                my_userset = User.objects.filter(username=my_profile.username)
+                to_address = to_address + my_userset[0].email +','
+            from_address = "braddfoy@gmail.com"
+            password = '277Sheldon'
+            my_subject = 'Training Management System Notification: New deliverable ready to record'
+            my_message = 'Subject: {}\n\n{}'.format(my_subject, email_body)
+            context = ssl.create_default_context()
+            server = smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context)
+            server.login(from_address, password)
+            server.sendmail('braddfoy@gmail.com', to_address, my_message )
+            server.quit()
+# end notification code
+
 
     return my_deliverable_detail_record
 

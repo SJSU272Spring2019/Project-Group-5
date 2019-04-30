@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Deliverable Queue Page</title>
+
+</head>
+<body>
+  <h2> Dashboard</h2><hr>
+
+  <h4>Total number of records: {{count}}</h4><br>
+
+<div id="container"></div>
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script>
+  Highcharts.chart('container', {
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: 'Deliverable Queue Chart'
+      },
+      xAxis: {
+          categories: [
+            'A&D', 'AI Engine', 'Automotive', 'ISM', 'Software/IP/Tools - HLS'
+          ],
+      },
+      series: [{
+          name: 'A&D',
+          data: [
+            {% for entry in dataset %}{{ entry.a_d }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'green'
+      },
+      {
+          name: 'AI Engine',
+          data: [
+            {% for entry in dataset %}{{ entry.ai_engine }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'blue'
+      },
+      {
+          name: 'Automotive',
+          data: [
+            {% for entry in dataset %}{{ entry.automotive }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'blue'
+      },
+      {
+          name: 'ISM',
+          data: [
+            {% for entry in dataset %}{{ entry.ism }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'blue'
+      },
+       {
+          name: 'Software/IP/Tools - HLS',
+          data: [
+            {% for entry in dataset %}{{ entry.software }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'red'
+      }]
+  });
+</script>
+</body>
+</html>

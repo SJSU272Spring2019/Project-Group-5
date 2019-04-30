@@ -47,7 +47,10 @@ def save(request):
     if request.POST['days_to_complete'] == '':
         my_days_to_complete_course = 0
     else:
-        my_days_to_complete_course = int(request.POST['days_to_complete'])
+        try:
+            my_days_to_complete_course = int(request.POST['days_to_complete'])
+        except(ValueError):
+            my_days_to_complete_course=0
 
     my_course_exam = "course_exam" in request.POST
     if my_course_exam:
