@@ -23,6 +23,9 @@ urlpatterns = [
     path('', views.index),
     path('deliverable_detail_submit/', views.deliverable_detail_submit),
     path('deploy_return/', views.index),
-    path('deliverable_link/', views.deliverable_link)
+    path('deliverable_link/', views.deliverable_link),
+    path('delete_link/', views.delete_link)
 
 ]
+
+

@@ -23,4 +23,5 @@ urlpatterns = [
     path('',  views.deployment_detail),
     path('deployment_detail/', views.deployment_detail),
     path('deployment_detail_submit/', views.deployment_detail_submit)
+
 ]

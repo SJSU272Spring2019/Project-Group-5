@@ -2,6 +2,7 @@ from django.shortcuts import render
 from . models import DeploymentDetail
 from deliverable_detail.models import Deliverable
 from authenticate.models import UserProfile
+from django.core.files.storage import FileSystemStorage
 
 def index(request): # This line should be removed
     return render(request, 'index.html')  # This line should be removed
@@ -21,14 +22,30 @@ def deployment_detail_submit(request):
     if request.POST.get('deployment_cancel') == 'Cancel':
         if request.POST['deliverable_id'] != '':
             my_deliverable_detail_record = Deliverable.objects.get(id=int(request.POST['deliverable_id']))
-            return render(request, 'create_deliverable.html', {'my_deliverable_detail_record':my_deliverable_detail_record, 'profile_info':UserProfile.objects.get(username=request.user.username)})
+            my_directory = request.POST.get('deliverable_id') + '/'
+            try:
+                fs = FileSystemStorage()
+                list_names = ''
+                for filename in fs.listdir(request.POST.get('deliverable_id'))[1]:
+                    list_names = list_names + '<a href="http://127.0.0.1:8000/detail/delete_link?delete_file=' + filename + '&deliverable_id=' + request.POST.get('deliverable_id') + '"> Delete File</a> &nbsp; &nbsp; &nbsp; &nbsp;<a href="http://127.0.0.1:8000/media/' + my_directory + filename + '" target="_blank">' + filename + '</a><br><br>'
+            except FileNotFoundError:
+                list_names = '<div align="center">No attached files</div>'
+            return render(request, 'create_deliverable.html', {'my_deliverable_detail_record':my_deliverable_detail_record, 'profile_info':UserProfile.objects.get(username=request.user.username),'my_links': list_names})
         else:
             my_deliverable_detail_record = Deliverable()
             return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record, 'profile_info':UserProfile.objects.get(username=request.user.username)})
     elif request.POST.get('deployment_save_close'):
         my_deployment_detail_record = save(request)
+        my_directory = request.POST.get('deliverable_id') + '/'
+        try:
+            fs = FileSystemStorage()
+            list_names = ''
+            for filename in fs.listdir(request.POST.get('deliverable_id'))[1]:
+                list_names = list_names + '<a href="http://127.0.0.1:8000/detail/delete_link?delete_file=' + filename + '&deliverable_id=' + request.POST.get('deliverable_id') + '"> Delete File</a> &nbsp; &nbsp; &nbsp; &nbsp;<a href="http://127.0.0.1:8000/media/' + my_directory + filename + '" target="_blank">' + filename + '</a><br><br>'
+        except FileNotFoundError:
+            list_names = '<div align="center">No attached files</div>'
         my_deliverable_detail_record = Deliverable.objects.get(id=int(request.POST['deliverable_id']))
-        return render(request, 'create_deliverable.html', {'my_deliverable_detail_record':my_deliverable_detail_record, 'profile_info':UserProfile.objects.get(username=request.user.username)})
+        return render(request, 'create_deliverable.html', {'my_deliverable_detail_record':my_deliverable_detail_record, 'profile_info':UserProfile.objects.get(username=request.user.username),'my_links': list_names})
     else:
         my_deployment_detail_record = save(request)
         return render(request, 'deployment_detail.html', {'my_deployment_detail_record': my_deployment_detail_record, 'profile_info':UserProfile.objects.get(username=request.user.username)})

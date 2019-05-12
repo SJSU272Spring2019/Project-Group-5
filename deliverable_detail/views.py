@@ -5,6 +5,8 @@ from datetime import datetime
 from deployment_detail.models import DeploymentDetail
 from authenticate.models import UserProfile
 from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
+from django.utils.datastructures import MultiValueDictKeyError
 import smtplib, ssl
 
 # Create your views here.
@@ -41,11 +43,40 @@ def deliverable_detail_submit(request):
         return render(request, 'queue_page.html', {'deliverable_records': deliverable_records , 'profile_info': UserProfile.objects.get(username=request.user.username)})
     if request.POST.get('save'):
         my_deliverable_detail_record=save_detail(request)
-        return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record, 'profile_info': UserProfile.objects.get(username=request.user.username)})
+        my_directory = request.POST.get('deliverable_id') + '/'
+        try:
+            fs = FileSystemStorage()
+            list_names = ''
+            for filename in fs.listdir(request.POST.get('deliverable_id'))[1]:
+                list_names = list_names + '<a href="http://127.0.0.1:8000/detail/delete_link?delete_file=' + filename + '&deliverable_id=' + request.POST.get('deliverable_id') + '"> Delete File</a> &nbsp; &nbsp; &nbsp; &nbsp;<a href="http://127.0.0.1:8000/media/' + my_directory + filename + '" target="_blank">' + filename + '</a><br><br>'
+        except FileNotFoundError:
+            list_names = '<div align="center">No attached files</div>'
+        return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record, 'profile_info': UserProfile.objects.get(username=request.user.username),'my_links': list_names})
     if request.POST.get('save_exit'):
         my_deliverable_detail_record = save_detail(request)
         deliverable_records = Deliverable.objects.filter(status='2) Develop')
         return render(request, 'queue_page.html', {'deliverable_records': deliverable_records, 'profile_info': UserProfile.objects.get(username=request.user.username)})
+    if request.POST.get('upload_file'):
+        my_deliverable_detail_record = save_detail(request)
+        try:
+            my_directory = request.POST.get('deliverable_id') + '/'
+            uploaded_file = request.FILES['document']
+            fs = FileSystemStorage()
+            fs.delete(my_directory + uploaded_file.name)
+            name = fs.save(my_directory + uploaded_file.name, uploaded_file)
+        except MultiValueDictKeyError:
+            print('MultiValueDictKeyError')
+
+        try:
+            fs = FileSystemStorage()
+            list_names = ''
+            for filename in fs.listdir(request.POST.get('deliverable_id'))[1]:
+                list_names = list_names + '<a href="http://127.0.0.1:8000/detail/delete_link?delete_file=' + filename + '&deliverable_id=' + request.POST.get('deliverable_id') + '"> Delete File</a> &nbsp; &nbsp; &nbsp; &nbsp;<a href="http://127.0.0.1:8000/media/' + my_directory + filename + '" target="_blank">' + filename + '</a><br><br>'
+
+        except FileNotFoundError:
+            list_names = '<div align="center">No attached files</div>'
+        deliverable_records = Deliverable.objects.filter(status='2) Develop')
+        return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record,'profile_info': UserProfile.objects.get(username=request.user.username),'my_links': list_names})
 
 
 def save_detail(request):
@@ -117,8 +148,8 @@ def save_detail(request):
             for my_profile in my_profileset:
                 my_userset = User.objects.filter(username=my_profile.username)
                 to_address = to_address + my_userset[0].email +','
-            from_address = "braddfoy@gmail.com"
-            password = '277Sheldon'
+            from_address = "trainingmanagementcmpe272"
+            password = 'rakeshranjan'
             my_subject = 'Training Management System Notification: New deliverable ready to record'
             my_message = 'Subject: {}\n\n{}'.format(my_subject, email_body)
             context = ssl.create_default_context()
@@ -131,8 +162,6 @@ def save_detail(request):
 
     return my_deliverable_detail_record
 
-
-
 def queue_page(request):
     if not request.user.is_authenticated:
         user_message = "Please login to access the Training Management System"
@@ -144,6 +173,52 @@ def deliverable_link(request):
     if not request.user.is_authenticated:
         user_message = "Please login to access the Training Management System"
         return render(request, 'login.html', {'user_message': user_message})
+    try:
+        my_directory = request.GET['deliverable_id'] + '/'
+        fs = FileSystemStorage()
+        list_names = ''
+        for filename in fs.listdir(request.GET['deliverable_id'])[1]:
+            list_names = list_names + '<a href="http://127.0.0.1:8000/detail/delete_link?delete_file=' + filename + '&deliverable_id=' + request.GET['deliverable_id'] + '"> Delete File</a> &nbsp; &nbsp; &nbsp; &nbsp;<a href="http://127.0.0.1:8000/media/' + my_directory + filename + '" target="_blank">' + filename + '</a><br><br>'
+    except FileNotFoundError:
+        list_names = '<div align="center">No attached files</div>'
     my_deliverable_detail_record = Deliverable.objects.filter(id=int(request.GET['deliverable_id']))
-    return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record[0], 'profile_info': UserProfile.objects.get(username=request.user.username)})
+    return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record[0], 'profile_info': UserProfile.objects.get(username=request.user.username),'my_links': list_names})
 
+
+def delete_link(request):
+    if not request.user.is_authenticated:
+        user_message = "Please login to access the Training Management System"
+        return render(request, 'login.html', {'user_message': user_message})
+    my_directory = request.GET['deliverable_id'] + '/'
+    try:
+        fs = FileSystemStorage()
+        fs.delete(my_directory + request.GET['delete_file'])
+        list_names = ''
+        for filename in fs.listdir(request.GET['deliverable_id'])[1]:
+            list_names = list_names + '<a href="http://127.0.0.1:8000/detail/delete_link?delete_file=' + filename + '&deliverable_id=' + request.GET['deliverable_id'] + '"> Delete File</a> &nbsp; &nbsp; &nbsp; &nbsp;<a href="http://127.0.0.1:8000/media/' + my_directory + filename + '" target="_blank">' + filename + '</a><br><br>'
+    except FileNotFoundError:
+        list_names = '<div align="center">No attached files</div>'
+    my_deliverable_detail_record = Deliverable.objects.filter(id=int(request.GET['deliverable_id']))
+    return render(request, 'create_deliverable.html', {'my_deliverable_detail_record': my_deliverable_detail_record[0],
+                                                       'profile_info': UserProfile.objects.get(
+                                                           username=request.user.username), 'my_links': list_names})
+
+
+# remove everything below this line
+def upload_button(request):
+    context = {}
+    if request.method == 'POST':
+        my_directory = '23/'
+        uploaded_file = request.FILES['document']
+        fs = FileSystemStorage()
+        name = fs.save('23/' + uploaded_file.name, uploaded_file)
+        context['url'] = fs.url(name)
+        context['fname'] = name
+        list_names = ''
+        for filename in fs.listdir('23')[1]:
+            list_names = list_names + '<a href="http://127.0.0.1:8000/detail/delete_link?delete_file=' + filename + '&deliverable_id=' + request.GET['deliverable_id'] + '"> Delete File</a> &nbsp; &nbsp; &nbsp; &nbsp;<a href="http://127.0.0.1:8000/media/' + my_directory + filename + '" target="_blank">' + filename + '</a><br><br>'
+        context['myLinks'] = list_names
+        print(uploaded_file.name)
+        print(uploaded_file.size)
+    return render(request, 'index.html', context)
+# remove end
